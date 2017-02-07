@@ -54,14 +54,15 @@ PINS = OrderedDict((i,machine.Pin(i, machine.Pin.IN)) for i in PIN_NUMBERS)
 @Router
 class PinServer(WebApp):
     @route("/", methods=['GET','POST'])
-    def pins(self, context):
+    def pins(context):
         if DEBUG:
             print("INSIDE ROUTE HANDLER name='%s' " % ('pins'))
-        
+        if context is None:
+            context = self
         #open the template files
-        pins_tmp   = LazyTemplate.from_file("templates/pins.html_template")
-        ptr_tmp    =     Template.from_file("templates/pins_table_row.html_template")
-        pins_jstmp = LazyTemplate.from_file("templates/pins.js_template")
+        pins_tmp   = LazyTemplate.from_file("templates/pins.html")
+        ptr_tmp    =     Template.from_file("templates/pins_table_row.html")
+        pins_jstmp = LazyTemplate.from_file("templates/pins.js")
         comment = ""
         
         if context.request.method == 'POST':
@@ -83,7 +84,7 @@ class PinServer(WebApp):
                 for line in ptr_tmp.render():
                     yield line
         
-        server_base_url = "%s:%s" % (self.server_addr,self.server_port)
+        server_base_url = "%s:%s" % (SERVER_ADDR, SERVER_PORT)#(self.server_addr,self.server_port)
         pins_jstmp.format(server_base_url = server_base_url)
         pins_tmp.format(table_content = gen_table_content(PINS),
                         comment=comment,
