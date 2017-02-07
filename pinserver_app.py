@@ -1,6 +1,6 @@
 ################################################################################
 # STANDARD LIB IMPORTS
-import time
+import os, time
 try:
     from collections import OrderedDict
 except ImportError:
@@ -10,6 +10,11 @@ try:
     import machine
 except ImportError:
     import mock_machine as machine #a substitute for PC testing
+    
+try:
+    import json
+except ImportError:
+    import ujson as json #micropython specific
 
 #-------------------------------------------------------------------------------
 # PAWPAW PACKAGE IMPORTS
@@ -19,13 +24,26 @@ from pawpaw import WebApp, route, Template, LazyTemplate
 # LOCAL IMPORTS
 
 ################################################################################
+# CONFIGURATION
+#-------------------------------------------------------------------------------
+#read the SECRET configuration file, NOTE this contains PRIVATE keys and 
+#should never be posted online
+CONFIG_FILENAME = "SECRET_CONFIG.json"
+
+config = {}
+if CONFIG_FILENAME in os.listdir():
+    config = json.load(open(CONFIG_FILENAME,'r'))
+
+#load configuration for this module
+app_cfg = config.get('pinserver_app', {})
+DEBUG   = app_cfg.get('debug', 0)
+
+SERVER_ADDR = app.cfg.get('server_addr','0.0.0.0')  #default to localhost on PC
+SERVER_ADDR = app.cfg.get('server_port',9999)
+
+################################################################################
 # GLOBALS
 #-------------------------------------------------------------------------------
-DEBUG = False
-DEBUG = True
-
-SERVER_IP   = '0.0.0.0'
-SERVER_PORT = 9999
 PIN_NUMBERS = (0, 2, 4, 5, 12, 13, 14, 15)
 PINS = OrderedDict((i,machine.Pin(i, machine.Pin.IN)) for i in PIN_NUMBERS)
 
@@ -77,7 +95,7 @@ class PinServer(WebApp):
 if __name__ == "__main__":
     #---------------------------------------------------------------------------
     # Create application instance binding to localhost on port 9999
-    app = PinServer(server_addr = SERVER_IP,
+    app = PinServer(server_addr = SERVER_ADDR,
                     server_port = SERVER_PORT,
                    )
 
