@@ -19,6 +19,7 @@ except ImportError:
 #-------------------------------------------------------------------------------
 # PAWPAW PACKAGE IMPORTS
 from pawpaw import WebApp, route, Template, LazyTemplate
+from pawpaw.web_app import Router
 
 #-------------------------------------------------------------------------------
 # LOCAL IMPORTS
@@ -39,7 +40,7 @@ app_cfg = config.get('pinserver_app', {})
 DEBUG   = app_cfg.get('debug', 0)
 
 SERVER_ADDR = app_cfg.get('server_addr','0.0.0.0')  #default to localhost on PC
-SERVER_ADDR = app_cfg.get('server_port',9999)
+SERVER_PORT = app_cfg.get('server_port',9999)
 
 ################################################################################
 # GLOBALS
@@ -50,6 +51,7 @@ PINS = OrderedDict((i,machine.Pin(i, machine.Pin.IN)) for i in PIN_NUMBERS)
 ################################################################################
 # APPLICATION CODE
 #-------------------------------------------------------------------------------
+@Router
 class PinServer(WebApp):
     @route("/", methods=['GET','POST'])
     def pins(self, context):
@@ -92,13 +94,13 @@ class PinServer(WebApp):
 ################################################################################
 # MAIN
 #-------------------------------------------------------------------------------
-if __name__ == "__main__":
-    #---------------------------------------------------------------------------
-    # Create application instance binding to localhost on port 9999
-    app = PinServer(server_addr = SERVER_ADDR,
-                    server_port = SERVER_PORT,
-                   )
+#if __name__ == "__main__":
+#---------------------------------------------------------------------------
+# Create application instance binding to localhost on port 9999
+app = PinServer(server_addr = SERVER_ADDR,
+                server_port = SERVER_PORT,
+               )
 
-    # Activate the server; this will keep running until you
-    # interrupt the program with Ctrl-C
-    app.serve_forever()
+# Activate the server; this will keep running until you
+# interrupt the program with Ctrl-C
+app.serve_forever()
