@@ -38,8 +38,8 @@ if CONFIG_FILENAME in os.listdir():
 app_cfg = config.get('pinserver_app', {})
 DEBUG   = app_cfg.get('debug', 0)
 
-SERVER_ADDR = app.cfg.get('server_addr','0.0.0.0')  #default to localhost on PC
-SERVER_ADDR = app.cfg.get('server_port',9999)
+SERVER_ADDR = app_cfg.get('server_addr','0.0.0.0')  #default to localhost on PC
+SERVER_ADDR = app_cfg.get('server_port',9999)
 
 ################################################################################
 # GLOBALS
