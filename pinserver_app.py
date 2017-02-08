@@ -54,7 +54,7 @@ PINS = OrderedDict((i,machine.Pin(i, machine.Pin.IN)) for i in PIN_NUMBERS)
 @Router
 class PinServer(WebApp):
     @route("/", methods=['GET','POST'])
-    def pins(context):
+    def pins(self, context):
         if DEBUG:
             print("INSIDE ROUTE HANDLER name='%s' " % ('pins'))
         if context is None:
@@ -84,8 +84,8 @@ class PinServer(WebApp):
                 for line in ptr_tmp.render():
                     yield line
         
-        server_base_url = "%s:%s" % (SERVER_ADDR, SERVER_PORT)#(self.server_addr,self.server_port)
-        pins_jstmp.format(server_base_url = server_base_url)
+        #server_base_url = "%s:%s" % (self.server_addr,self.server_port)
+        #pins_jstmp.format(server_base_url = server_base_url)
         pins_tmp.format(table_content = gen_table_content(PINS),
                         comment=comment,
                         javascript = pins_jstmp)
