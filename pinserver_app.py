@@ -23,6 +23,17 @@ from pawpaw.web_app import Router
 
 #-------------------------------------------------------------------------------
 # LOCAL IMPORTS
+import network_setup
+
+DEBUG = True
+
+if DEBUG:
+    print("INSIDE MODULE name='%s' " % ('pinserver_app'))
+    try:
+        from micropython import mem_info
+        mem_info()
+    except ImportError:
+        pass
 
 ################################################################################
 # CONFIGURATION
@@ -42,6 +53,20 @@ DEBUG   = app_cfg.get('debug', 0)
 SERVER_ADDR = app_cfg.get('server_addr','0.0.0.0')  #default to localhost on PC
 SERVER_PORT = app_cfg.get('server_port',9999)
 
+# ------------------------------------------------------------------------------
+# Network/Services setup
+sta_if, ap_if = network_setup.do_connect(**config['network_setup'])
+
+if DEBUG:
+    print("INSIDE MODULE name='%s': after network_setup.do_connect " % ('pinserver_app'))
+    print("\tSERVER_ADDR = %s" % SERVER_ADDR)
+    print("\tSERVER_PORT = %s" % SERVER_PORT)
+    try:
+        from micropython import mem_info
+        mem_info()
+    except ImportError:
+        pass
+
 ################################################################################
 # GLOBALS
 #-------------------------------------------------------------------------------
@@ -55,8 +80,14 @@ PINS = OrderedDict((i,machine.Pin(i, machine.Pin.IN)) for i in PIN_NUMBERS)
 class PinServer(WebApp):
     @route("/", methods=['GET','POST'])
     def pins(self, context):
+        global DEBUG
         if DEBUG:
             print("INSIDE ROUTE HANDLER name='%s' " % ('pins'))
+            try:
+                from micropython import mem_info
+                mem_info()
+            except ImportError:
+                pass
         if context is None:
             context = self
         #open the template files
@@ -91,6 +122,14 @@ class PinServer(WebApp):
                         javascript = pins_jstmp)
         #finally render the view
         context.render_template(pins_tmp)
+        
+        if DEBUG:
+            print("LEAVING ROUTE HANDLER name='%s' " % ('pins'))
+            try:
+                from micropython import mem_info
+                mem_info()
+            except ImportError:
+                pass
         
 ################################################################################
 # MAIN

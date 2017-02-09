@@ -1,5 +1,9 @@
 import time
 import machine
+from micropython import mem_info
+
+print("main.py running:")
+mem_info()
 print("Waiting for connection on UART 0...",end="")
 time.sleep(1.0)
 
