@@ -60,8 +60,15 @@ if DEBUG:
 # ------------------------------------------------------------------------------
 # ESP8266
 if PLATFORM == 'esp8266':
+    import network_setup
+    if DEBUG:
+        print("RUNNING network_setup.do_connect:")
+    sta_if, ap_if = network_setup.do_connect(**config['network_setup'])
+    time.sleep(1.0)
     if SERVER_ADDR is None:
-        SERVER_ADDR = "192.168.4.1" #default to AP interface
+        #get DHCP address
+        info = sta_if.ifconfig()
+        SERVER_ADDR = info[0]
         if DEBUG:
             print("DEFAULTING SERVER_ADDR to '%s'" % SERVER_ADDR)
     if SERVER_PORT is None:
@@ -69,11 +76,6 @@ if PLATFORM == 'esp8266':
         if DEBUG:
             print("DEFAULTING SERVER_PORT to '%s'" % SERVER_PORT)
     # Network/Services setup
-    import network_setup
-    if DEBUG:
-        print("RUNNING network_setup.do_connect:")
-    sta_if, ap_if = network_setup.do_connect(**config['network_setup'])
-    time.sleep(1.0)
    
 # ------------------------------------------------------------------------------
 # DEFAULT PLATFORM
