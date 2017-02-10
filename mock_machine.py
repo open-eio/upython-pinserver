@@ -1,20 +1,19 @@
 DIRECTION_IN = 0
+DIRECTION_OUT = 1
  
 class Pin(object):
     IN = DIRECTION_IN
-    def __init__(self, i, direction = DIRECTION_IN):
+    OUT = DIRECTION_OUT
+    def __init__(self, i, direction = DIRECTION_OUT):
         self._i = i
         self._direction = direction
         self._value = False
     def __str__(self):
         return str(self._i)
-    def value(self):
-        return self._value
-    def __setattr__(self, name, val):  #FIXME hacky way to mock value property and allow pin.value() calls
-        if name == "value":
+    def value(self, val = None):
+        if not val is None:
             self._value = val
-        else:
-            object.__setattr__(self,name,val)
+        return self._value
 
 if __name__ == "__main__":
     pin = Pin(0)
