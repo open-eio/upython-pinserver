@@ -1,2 +1,2 @@
 #!/bin/bash -x
-screen /dev/ttyUSB0 115200
+screen /dev/ttyUSB1 115200
